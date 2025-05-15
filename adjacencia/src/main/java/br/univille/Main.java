@@ -14,24 +14,39 @@ public class Main {
     }
 
     public static boolean isGrafoNaoDirecionadoValido(Map<Integer, List<Integer>> grafo) {
+        if (grafo.isEmpty()) return true; // Grafo vazio é válido
+
+        int V = grafo.size();
+
         for (Map.Entry<Integer, List<Integer>> entry : grafo.entrySet()) {
             int no1 = entry.getKey();
             List<Integer> adjacentes = entry.getValue();
+
+            // Verifica se no1 está no intervalo válido
+            if (no1 < 0 || no1 >= V) {
+                return false;
+            }
 
             // Verifica se há auto-loops
             if (adjacentes.contains(no1)) {
                 return false;
             }
 
-            // Verifica se não há arestas paralelas e se a relação é bidirecional
+            // Verifica se não há arestas paralelas
             Set<Integer> setAdjacentes = new HashSet<>(adjacentes);
             if (setAdjacentes.size() != adjacentes.size()) {
-                return false; // Arestas paralelas detectadas
+                return false;
             }
 
             for (int no2 : adjacentes) {
+                // Verifica se no2 está no intervalo válido
+                if (no2 < 0 || no2 >= V) {
+                    return false;
+                }
+
+                // Verifica se a relação é bidirecional
                 if (!grafo.containsKey(no2) || !grafo.get(no2).contains(no1)) {
-                    return false; // Relação não é bidirecional
+                    return false;
                 }
             }
         }
