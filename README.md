@@ -13,18 +13,19 @@ Dada uma lista de adjacência representando um grafo, escreva uma função que r
 
 ## 🧠 Solução
 
-O código em Java implementa a função `isGrafoNaoDirecionadoValido` que recebe um grafo como um `Map<Integer, List<Integer>>` e valida os critérios acima. 
+O código em Java implementa a função `isGrafoNaoDirecionadoValido` que recebe um grafo como um `Map<Integer, List<Integer>>` e valida os critérios acima.
 
 ### ✅ O que o código verifica:
 
-- **Auto-loops**: se um nó aparece na sua própria lista de adjacência.
-- **Arestas paralelas**: se há elementos duplicados nas listas de adjacência.
-- **Bidirecionalidade**: se toda conexão é mútua entre os nós.
-- (Opcional) A verificação se os nós estão entre `0` e `V-1` pode ser adicionada facilmente, se desejado.
+* Grafo vazio é considerado válido.
+* **Auto-loops**: se um nó aparece na sua própria lista de adjacência.
+* **Arestas paralelas**: se há elementos duplicados nas listas de adjacência.
+* **Bidirecionalidade**: se toda conexão é mútua entre os nós.
+* **Validação do intervalo dos nós**: todos os nós e seus vizinhos devem estar entre `0` e `V-1`.
 
 ---
 
-## 💻 Exemplo de Código
+## 💻 Código Java Completo
 
 ```java
 package br.univille;
@@ -43,24 +44,39 @@ public class Main {
     }
 
     public static boolean isGrafoNaoDirecionadoValido(Map<Integer, List<Integer>> grafo) {
+        if (grafo.isEmpty()) return true; // Grafo vazio é válido
+
+        int V = grafo.size();
+
         for (Map.Entry<Integer, List<Integer>> entry : grafo.entrySet()) {
             int no1 = entry.getKey();
             List<Integer> adjacentes = entry.getValue();
+
+            // Verifica se no1 está no intervalo válido
+            if (no1 < 0 || no1 >= V) {
+                return false;
+            }
 
             // Verifica se há auto-loops
             if (adjacentes.contains(no1)) {
                 return false;
             }
 
-            // Verifica se não há arestas paralelas e se a relação é bidirecional
+            // Verifica se não há arestas paralelas
             Set<Integer> setAdjacentes = new HashSet<>(adjacentes);
             if (setAdjacentes.size() != adjacentes.size()) {
-                return false; // Arestas paralelas detectadas
+                return false;
             }
 
             for (int no2 : adjacentes) {
+                // Verifica se no2 está no intervalo válido
+                if (no2 < 0 || no2 >= V) {
+                    return false;
+                }
+
+                // Verifica se a relação é bidirecional
                 if (!grafo.containsKey(no2) || !grafo.get(no2).contains(no1)) {
-                    return false; // Relação não é bidirecional
+                    return false;
                 }
             }
         }
@@ -68,7 +84,7 @@ public class Main {
         return true;
     }
 }
-````
+```
 
 ---
 
@@ -92,13 +108,9 @@ true
 
 ## 📌 Observações
 
-O código assume que os nós estão entre `0` e `V-1`, onde `V` é o número total de vértices. Para validar explicitamente essa condição, você pode adicionar este trecho no início da função:
-
-```java
-int V = grafo.size();
-for (int no : grafo.keySet()) {
-    if (no < 0 || no >= V) return false;
-}
-```
+* O grafo vazio (`grafo.isEmpty()`) é considerado válido.
+* O número total de vértices `V` é obtido pela quantidade de chaves no mapa.
+* Todos os nós (chaves) e seus vizinhos devem estar no intervalo `[0, V-1]`.
+* O grafo deve conter todas as chaves correspondentes a seus vizinhos para garantir a bidirecionalidade.
 
 ---
